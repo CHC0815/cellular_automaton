@@ -1,0 +1,6 @@
+numpy
+numba
+cudatoolkit
+matplotlib
+opencv
+tqdm

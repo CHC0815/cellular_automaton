@@ -1,11 +1,25 @@
 import matplotlib.pyplot as plt
 import cv2
+import io
 
-def render_frame(grid, filename):
+def render_frame(grid, filename, disk: bool = False) -> io.BytesIO | None:
+    plt.figure(figsize=(grid.shape[1] / 100, grid.shape[0] / 100), dpi=100)
     plt.imshow(grid, cmap='binary')
     plt.axis('off')
-    plt.savefig(filename, bbox_inches='tight', pad_inches=0)
-    plt.close()
+    plt.gca().set_xticks([])
+    plt.gca().set_yticks([])
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    if disk:
+        plt.savefig(filename, bbox_inches='tight', pad_inches=0)
+        plt.close()
+        return None
+    else:
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+        plt.close()
+        buf.seek(0)
+        return buf
+
 
 def create_video(frames, output_filename):
     frame = cv2.imread(frames[0])

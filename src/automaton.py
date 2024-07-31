@@ -21,7 +21,8 @@ def cellular_automaton_kernel(current_grid, next_grid):
             if i == 0 and j == 0:
                 continue
             if 0 <= x + 1 < current_grid.shape[0] and 0 <= y +j < current_grid.shape[1]:
-                alive_neighbors += current_grid[x + i, y + j]
+                if current_grid[x + i, y + j] == 1:
+                    alive_neighbors += 1
 
     next_grid[x, y] = rule(current_grid[x, y], alive_neighbors)
 
@@ -47,20 +48,19 @@ def automaton(iterations:int = 100, s: int = 1024, interactive: bool = False, sa
         cellular_automaton_kernel[blockspergrid, threadsperblock](d_grid, d_new_grid)
         d_new_grid.copy_to_host(new_grid)
         
-        grid, new_grid = new_grid, grid  # Swap the grids
+        grid, new_grid = new_grid, grid
 
         if save:
             frame_filename = 'tmp/frame_{num:{fill}{width}}.png'.format(num=i, fill='0', width=int(math.log10(iterations)) + 1)
-            render_frame(grid, frame_filename, True)
+            render_frame(grid, frame_filename)
             frames.append(frame_filename)
 
         if show:
-            img = Image.open(render_frame(grid, "", False))
-            cv2.imshow('frame', cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))
+            cv2.imshow('frame', np.uint8(grid)*255)
         if show and interactive:
             cv2.waitKey(0)
         elif show and not interactive:
-            cv2.waitKey(1)
+            cv2.waitKey(10)
 
     if save:
         create_video(frames, 'cellular_automaton.mp4')

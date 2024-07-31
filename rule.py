@@ -1,15 +1,18 @@
 from numba import cuda
 
+alive = 1
+dead = 0
+
 @cuda.jit(device=True)
 def rule(state, alive_neighbors):
     # conway's game of life rule
-    if state == 1:
+    if state == alive:
         if alive_neighbors < 2 or alive_neighbors > 3:
-            return 0
+            return dead
         else:
-            return 1
+            return alive
     else:
         if alive_neighbors == 3:
-            return 1
+            return alive
         else:
-            return 0
+            return dead

@@ -6,14 +6,6 @@ import glob
 import os
 
 def render_frame(grid, filename):
-    # plt.figure(figsize=(grid.shape[1] / 100, grid.shape[0] / 100), dpi=100)
-    # plt.imshow(grid, cmap='binary')
-    # plt.axis('off')
-    # plt.gca().set_xticks([])
-    # plt.gca().set_yticks([])
-    # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    # plt.savefig(filename, bbox_inches='tight', pad_inches=0)
-    # plt.close()
     cv2.imwrite(filename, np.uint8(grid)*255)
 
 
@@ -34,3 +26,23 @@ def _clear_tmp():
     files = glob.glob('tmp/*')
     for f in files:
         os.remove(f)
+
+
+class VideoRenderer:
+    def __init__(self, output_file, width, height):
+        self.output_file = output_file
+        self.width = width
+        self.height = height
+
+        self.video = cv2.VideoWriter(self.output_file, cv2.VideoWriter_fourcc(*'avc1'), 60, (self.width, self.height))
+
+    def render_frame(self, grid, save: bool = True):
+        img_rgb = np.zeros((grid.shape[0], grid.shape[1], 3), dtype=np.uint8)
+        img_rgb[grid == 1] = [0,255,0]
+        img_rgb[grid == 0] = [0,0,0]
+        if save:
+            self.video.write(img_rgb)
+        return img_rgb
+    
+    def finish(self):
+        self.video.release()

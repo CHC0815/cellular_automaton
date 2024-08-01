@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import cv2
 import io
 import numpy as np
+import glob
+import os
 
 def render_frame(grid, filename):
     # plt.figure(figsize=(grid.shape[1] / 100, grid.shape[0] / 100), dpi=100)
@@ -26,3 +28,9 @@ def create_video(frames, output_filename):
 
     cv2.destroyAllWindows()
     video.release()
+    _clear_tmp()
+
+def _clear_tmp():
+    files = glob.glob('tmp/*')
+    for f in files:
+        os.remove(f)

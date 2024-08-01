@@ -3,7 +3,7 @@ from src.automaton import automaton
 from src.patterns import *
 
 def main():
-    size = 1024
+    size = 2048
     inital_state = np.zeros(shape=(size, size), dtype=np.int8)
     apply_pattern(512, 512, gosper_glider_gun_pattern(), inital_state)
     automaton(iterations=1000, s=size, interactive=False, show=True, save=True, initial_state=inital_state)
